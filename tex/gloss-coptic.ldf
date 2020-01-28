@@ -1,5 +1,6 @@
 \ProvidesFile{gloss-coptic.ldf}[polyglossia: module for coptic]
 \PolyglossiaSetup{coptic}{
+  bcp47=cop,
   script=Coptic,
   scripttag=copt,
   langtag=COP,
@@ -7,6 +8,9 @@
   hyphenmins={2,2},
   fontsetup=true
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{coptic}{cop}
 
 %\def\captionscoptic{%
 %   \def\refname{<++>}%

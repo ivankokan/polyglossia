@@ -9,6 +9,7 @@ and may look very wrong.}
 \RequirePackage{hebrewcal}
 
 \PolyglossiaSetup{hebrew}{
+  bcp47=he,
   script=Hebrew,
   direction=RL,
   scripttag=hebr,
@@ -19,6 +20,9 @@ and may look very wrong.}
   %TODO localalph={hebrewnumeral,Hebrewnumeral}
   %digits = hebrewnumber
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{hebrew}{he}
 
 \newif\if@calendar@hebrew
 \def\tmp@hebrew{hebrew}
@@ -49,6 +53,9 @@ and may look very wrong.}
 	\fi}
 
 \setkeys{hebrew}{numerals}
+
+% Register default options
+\xpg@initialize@gloss@options{hebrew}{numerals=arabic,calendar=gregorian,marcheshvan=false}
 
 \def\captionshebrew{%
   \def\prefacename{מבוא}%
@@ -104,19 +111,45 @@ and may look very wrong.}
    \fi
 }
 
+% Bidi inserts an RTL mark (0x200f) before any number, forcing numbers to
+% RTL. Hebrew uses LTR numbers, though. So we insert an LTR mark to revert
+% the directionality
+\ifxetex
+  \newcommand\xpg@hebrew@DigitsDotDashInterCharToks{\if@nonlatin\char"200E \fi}
+\fi
+
+\def\hebrew@ltr@numbers{%
+    \ifxetex
+      \XeTeXinterchartoks \bidi@sepmark@charclass  \bidi@digits@charclass = {\xpg@hebrew@DigitsDotDashInterCharToks}
+    \fi%
+}
+
+\def\nohebrew@ltr@numbers{%
+    \ifxetex
+      % This is bidi's original intervention
+      \XeTeXinterchartoks \bidi@sepmark@charclass  \bidi@digits@charclass = {\DigitsDotDashInterCharToks}
+    \fi%
+}
+
 \def\hebrew@numbers{%
    \let\@alph\hebrewnumeral%
    \let\@Alph\Hebrewnumeral%
+   % Prevent bidi from setting the numbers RTL
+   \hebrew@ltr@numbers%
 }
 
 \def\nohebrew@numbers{%
   \let\@alph\latin@alph%
   \let\@Alph\latin@Alph%
+  % Restore previous bidi numbers definition
+  \nohebrew@ltr@numbers
 }
 
 \def\hebrew@globalnumbers{%
    \let\@arabic\hebrewnumber%
    \renewcommand\thefootnote{\localnumeral*{footnote}}%
+   % Prevent bidi from setting the numbers RTL
+   \hebrew@ltr@numbers%
 }
 
 % Store original definition

@@ -1,6 +1,7 @@
 % !TEX encoding = UTF-8 Unicode
 \ProvidesFile{gloss-italian.ldf}[polyglossia: module for italian]
 \PolyglossiaSetup{italian}{
+  bcp47=it,
   hyphennames={italian},
   hyphenmins={2,2},
   langtag=ITA,
@@ -9,9 +10,15 @@
   fontsetup=true,
 }
 
+% BCP-47 compliant aliases
+\setlanguagealias*{italian}{it}
+
 
 %%% CHANGES START %%% by Enrico Gregorio
 \define@boolkey{italian}[italian@]{babelshorthands}[true]{}
+
+% Register default options
+\xpg@initialize@gloss@options{italian}{babelshorthands=false}
 
 \ifsystem@babelshorthands
   \setkeys{italian}{babelshorthands=true}
@@ -20,8 +27,9 @@
 \fi
 
 \ifcsundef{initiate@active@char}{%
-\input{babelsh.def}%
-\initiate@active@char{"}%
+  \input{babelsh.def}%
+  \initiate@active@char{"}%
+  \shorthandoff{"}%
 }{}
 
 \def\italian@shorthands{%

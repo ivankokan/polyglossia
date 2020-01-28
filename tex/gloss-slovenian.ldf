@@ -1,21 +1,24 @@
 \ProvidesFile{gloss-slovenian.ldf}[polyglossia: module for slovenian]
 
 \PolyglossiaSetup{slovenian}{
+  bcp47=sl,
   hyphennames={slovenian,slovene},
+  babelname=slovene,
   hyphenmins={2,2},
   langtag=SLV,
   fontsetup=true,
 }
 
-\providebool{slovenian@localalph}
-\define@boolkey{slovenian}[slovenian@]{localalph}[false]{%
-  \def\@tmpa{#1}%
-  \def\@tmptrue{true}%
-  \ifx\@tmpa\@tmptrue
-    \slovenian@localalphtrue
-  \fi
-  \setlocalalph
-}
+% BCP-47 compliant aliases
+\setlanguagealias*{slovenian}{sl}
+
+% Babel aliases
+\setlanguagealias{slovenian}{slovene}
+
+\define@boolkey{slovenian}[slovenian@]{localalph}[true]{}
+
+% Register default options
+\xpg@initialize@gloss@options{slovenian}{localalph=false}
 
 
 \def\captionsslovenian{%
@@ -41,14 +44,14 @@
    \def\headtoname{Prejme}%
    \def\proofname{Dokaz}%
    \def\glossaryname{Slovar}%
-   }
+}
 
 \def\dateslovenian{%   
   \def\today{\number\day.~\ifcase\month\or
     januar\or februar\or marec\or april\or maj\or junij\or
     julij\or avgust\or september\or oktober\or november\or december\fi
     \space \number\year}%
-  }
+}
 
 \def\slovenian@alph#1{%
   \ifcase#1\or a\or b\or c\or č\or d\or e\or f\or g\or h\or i\or j\or k\or l\or
@@ -56,15 +59,20 @@
 }
 \def\slovenian@Alph#1{%
   \ifcase#1\or A\or B\or C\or Č\or D\or E\or F\or G\or H\or I\or J\or K\or L\or
-  M\or N\or O\or P\or R\or S\or Š\or T\or U\or V\or Z\or Ž\else#1\fi}
+  M\or N\or O\or P\or R\or S\or Š\or T\or U\or V\or Z\or Ž\else#1\fi
+}
+
 \def\abeceda#1{\expandafter\slovenian@alph\csname c@#1\endcsname}
 \def\Abeceda#1{\expandafter\slovenian@Alph\csname c@#1\endcsname}
 
-\def\setlocalalph{%
-  \def\extras@slovenian{\let\alph\abeceda\let\Alph\Abeceda}
-  \def\blockextras@slovenian{\extras@slovenian}
-  \def\inlineextras@slovenian{\extras@slovenian}
-  \def\noextras@slovenian{\let\alph\latinalph\let\Alph\latinAlph}
+\def\extras@slovenian{%
+  \ifslovenian@localalph\let\alph\abeceda\let\Alph\Abeceda\fi%
 }
+
+\def\blockextras@slovenian{\extras@slovenian}
+
+\def\inlineextras@slovenian{\extras@slovenian}
+
+\def\noextras@slovenian{\let\alph\latinalph\let\Alph\latinAlph}
 
 \endinput

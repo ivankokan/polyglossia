@@ -2,12 +2,16 @@
 
 \ProvidesFile{gloss-lithuanian.ldf}[polyglossia: module for lithuanian]
 \PolyglossiaSetup{lithuanian}{
+  bcp47=lt,
   hyphennames={lithuanian},
   hyphenmins={2,2},
   langtag=LTH,
   indentfirst=true, % TODO Dokumentų rengimo taisyklių, patvirtintų Lietuvos vyriausiojo archyvaro 2011 m. liepos 4 d. įsakymu Nr. V-117, 29.1 punktą
   fontsetup=true
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{lithuanian}{lt}
 
 \def\captionslithuanian{%
    \def\prefacename{Pratarmė}%

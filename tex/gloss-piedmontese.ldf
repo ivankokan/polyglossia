@@ -2,6 +2,7 @@
 \ProvidesFile{gloss-piedmontese.ldf}[2013/02/12 v1.0 polyglossia: module for piedmontese]
 \makeatletter
 \PolyglossiaSetup{piedmontese}{
+  bcp47=pms,
   hyphennames={piedmontese},
   hyphenmins={2,2},
   langtag=PMS,
@@ -9,6 +10,8 @@
   fontsetup=true,
 }
 
+% BCP-47 compliant aliases
+\setlanguagealias*{piedmontese}{pms}
 
 \define@boolkey{piedmontese}[piedmontese@]{babelshorthands}[true]{}
 
@@ -19,8 +22,9 @@
 \fi
 
 \ifcsundef{initiate@active@char}{%
-\input{babelsh.def}%
-\initiate@active@char{"}%
+  \input{babelsh.def}%
+  \initiate@active@char{"}%
+  \shorthandoff{"}%
 }{}
 
 \def\piedmontese@shorthands{%

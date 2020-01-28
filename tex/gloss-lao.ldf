@@ -6,6 +6,7 @@ the output is not guaranteed to be correct\MessageBreak
 and may look very wrong.}
 \fi
 \PolyglossiaSetup{lao}{
+  bcp47=lo,
   script=Lao,
   scripttag=lao,
   langtag=LAO,
@@ -17,6 +18,9 @@ and may look very wrong.}
   %TODO localdigits=laonumber
 }
 
+% BCP-47 compliant aliases
+\setlanguagealias*{lao}{lo}
+
 \newif\if@lao@numerals
 \def\tmp@lao{lao}
 \define@key{lao}{numerals}[arabic]{%
@@ -25,7 +29,8 @@ and may look very wrong.}
 	  \@lao@numeralsfalse\fi
 }
 
-\setkeys{lao}{numerals}
+% Register default options
+\xpg@initialize@gloss@options{lao}{numerals=arabic}
 
 % Translations provided by Brian Wilson <bountonw at gmail.com>
 \def\captionslao{%

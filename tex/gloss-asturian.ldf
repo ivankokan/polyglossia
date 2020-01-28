@@ -3,6 +3,7 @@
 %
 \ProvidesFile{gloss-asturian.ldf}[polyglossia: module for asturian]
 \PolyglossiaSetup{asturian}{
+  bcp47=ast,
   hyphennames={asturian,catalan},
   hyphenmins={2,2},
   langtag=AST,
@@ -10,6 +11,9 @@
   indentfirst=true,
   fontsetup=true,
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{asturian}{ast}
 
 \def\captionsasturian{%
    \def\prefacename{Entamu}%

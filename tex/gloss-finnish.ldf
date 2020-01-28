@@ -1,5 +1,6 @@
 \ProvidesFile{gloss-finnish.ldf}[polyglossia: module for finnish]
 \PolyglossiaSetup{finnish}{
+  bcp47=fi,
   hyphennames={finnish},
   hyphenmins={2,2},
   langtag=FIN,
@@ -7,7 +8,13 @@
   fontsetup=true,
 }
 
+% BCP-47 compliant aliases
+\setlanguagealias*{finnish}{fi}
+
 \define@boolkey{finnish}[finnish@]{babelshorthands}[true]{}
+
+% Register default options
+\xpg@initialize@gloss@options{finnish}{babelshorthands=false}
 
 \ifsystem@babelshorthands
   \setkeys{finnish}{babelshorthands=true}
@@ -18,6 +25,7 @@
 \ifcsundef{initiate@active@char}{%
     \input{babelsh.def}%
     \initiate@active@char{"}%
+    \shorthandoff{"}%
 }{}
 
 \def\finnish@shorthands{%

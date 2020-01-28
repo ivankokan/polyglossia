@@ -7,6 +7,7 @@ and may look very wrong.}
 \fi
 \RequireBidi
 \PolyglossiaSetup{divehi}{
+  bcp47=dv,
   script=Thaana,
   scripttag=thaa,
   langtag=DIV,% TODO Support DHV as well?
@@ -14,6 +15,9 @@ and may look very wrong.}
   hyphennames={nohyphenation},
   fontsetup=true
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{divehi}{dv}
 
 %\def\captionsdivehi{%
 %   \def\refname{<++>}%

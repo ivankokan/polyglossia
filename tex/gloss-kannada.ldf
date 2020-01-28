@@ -24,6 +24,7 @@ the output is not guaranteed to be correct\MessageBreak
 and may look very wrong.}
 \fi
 \PolyglossiaSetup{kannada}{
+  bcp47=kn,
   script=Kannada,
   scripttag=knda,
   langtag=KAN,
@@ -32,6 +33,9 @@ and may look very wrong.}
   fontsetup=true,
   localnumeral=kannadanumerals
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{kannada}{kn}
 
 %% Defining Kannada digits equivalents to english
 \def\kannadadigits#1{\expandafter\@kannada@digits #1@}

@@ -15,6 +15,7 @@ the output is not guaranteed to be correct\MessageBreak
 and may look very wrong.}
 \fi
 \PolyglossiaSetup{thai}{
+  bcp47=th,
   script=Thai,
   scripttag=thai,
   langtag=THA,
@@ -25,6 +26,9 @@ and may look very wrong.}
   %TODO localdigits=thainumber
 }
 
+% BCP-47 compliant aliases
+\setlanguagealias*{thai}{th}
+
 \newif\if@thai@numerals
 \def\tmp@thai{thai}
 \define@key{thai}{numerals}[arabic]{%
@@ -33,7 +37,8 @@ and may look very wrong.}
 	  \@thai@numeralsfalse\fi
 }
 
-\setkeys{thai}{numerals}
+% Register default options
+\xpg@initialize@gloss@options{thai}{numerals=arabic}
 
 \def\captionsthai{%
    \def\refname{หนังสืออ้างอิง}%

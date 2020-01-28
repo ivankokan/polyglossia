@@ -10,6 +10,7 @@ and may look very wrong.}
 \RequirePackage{hijrical}
 
 \PolyglossiaSetup{arabic}{
+  bcp47=ar,
   script=Arabic,
   direction=RL,
   langtag=ARA,
@@ -20,6 +21,23 @@ and may look very wrong.}
   localnumeral=arabicnumerals
   %TODO localalph={abjad,abjad}
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{arabic}{ar}
+\setlanguagealias*[locale=mashriq]{arabic}{ar-IQ}
+\setlanguagealias*[locale=default]{arabic}{ar-YE}
+\setlanguagealias*[locale=mashriq]{arabic}{ar-LB}
+\setlanguagealias*[locale=mashriq]{arabic}{ar-JO}
+\setlanguagealias*[locale=default]{arabic}{afb}
+\setlanguagealias*[locale=mauritania]{arabic}{ar-MR}
+\setlanguagealias*[locale=default]{arabic}{arz}
+\setlanguagealias*[locale=morocco]{arabic}{ary}
+\setlanguagealias*[locale=algeria]{arabic}{arq}
+\setlanguagealias*[locale=tunisia]{arabic}{aeb}
+\setlanguagealias*[locale=mashriq]{arabic}{ar-SY}
+\setlanguagealias*[locale=libya]{arabic}{ayl}
+\setlanguagealias*[locale=default]{arabic}{apd}
+\setlanguagealias*[locale=mashriq]{arabic}{ar-PS}
 
 \newif\ifeastern@numerals
 \def\tmp@mashriq{mashriq}
@@ -47,9 +65,11 @@ and may look very wrong.}
   \def\@tmpa{#1}%
   \ifx\@tmpa\tmp@morocco%
     \eastern@numeralsfalse%
+    \SetLanguageKeys{arabic}{bcp47=ary}%
   \else
     \ifx\@tmpa\tmp@algeria%
       \eastern@numeralsfalse%
+      \SetLanguageKeys{arabic}{bcp47=arq}%
     \fi%
   \fi%
   \gdef\@@arabic@month{\@arabic@month{#1}}}
@@ -69,8 +89,10 @@ and may look very wrong.}
 \define@key{arabic}{hijricorrection}[0]{%
   \gdef\@hijri@correction{#1}}%
 
-% This should set the defaults
-\setkeys{arabic}{locale,calendar,numerals,hijricorrection,abjadjimnotail=false}
+% Register default options
+\xpg@initialize@gloss@options{arabic}{locale=default,calendar=gregorian,numerals=mashriq,hijricorrection=0,abjadjimnotail=false}
+% Register alias options
+\xpg@set@alias@values{arabic}{calendar}{islamic}{hijri}
 
 \def\arabicgregmonth@default#1{\ifcase#1%
   % Egypt, Sudan, Yemen and Golf states
@@ -143,9 +165,8 @@ and may look very wrong.}
 
 \def\arabicnumber#1{%
   \ifeastern@numerals
-    \arabicdigits{\number#1}%
+    \@ensure@dir{\arabicdigits{\number#1}}%
   \else
-    %%\RL{\protect\reset@font\number#1}%
     \number#1%
   \fi}
 

@@ -6,6 +6,7 @@
 %%
 
 \PolyglossiaSetup{tibetan}{
+  bcp47=bo,
   script=Tibetan,
   scripttag=tibt,
   langtag=TIB,
@@ -14,6 +15,9 @@
   localnumeral=tibetannumerals
   %TODO localalph={xxx@alph,xxx@Alph}
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{tibetan}{bo}
 
 \newif\if@tibetan@numerals
 \def\tmp@tibetan{tibetan}
@@ -48,7 +52,8 @@
   \fi %
 }
 
-\setkeys{tibetan}{numerals}
+% Register default options
+\xpg@initialize@gloss@options{tibetan}{numerals=tibetan}
 
 % some are known, but very few
 % a few come from "Standardizing Tibetan Terms of Information Technology"

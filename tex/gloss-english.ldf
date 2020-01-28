@@ -1,10 +1,27 @@
 \ProvidesFile{gloss-english.ldf}[polyglossia: module for english]
+
 \PolyglossiaSetup{english}{
+  bcp47=en-US,
   hyphennames={english,american,usenglish,USenglish},
   hyphenmins={2,3},
   langtag=ENG,
   fontsetup=true,
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{english}{en}
+\setlanguagealias*[variant=australian]{english}{en-AU}
+\setlanguagealias*[variant=newzealand]{english}{en-NZ}
+\setlanguagealias*[variant=us]{english}{en-US}
+\setlanguagealias*[variant=british]{english}{en-GB}
+\setlanguagealias*[variant=canadian]{english}{en-CA}
+
+% Babel aliases
+\setlanguagealias[variant=us]{english}{american}
+\setlanguagealias[variant=australian]{english}{australian}
+\setlanguagealias[variant=british]{english}{british}
+\setlanguagealias[variant=canadian]{english}{canadian}
+\setlanguagealias[variant=newzealand]{english}{newzealand}
 
 \providebool{british@hyphen}
 \providebool{english@ordinalmonthday}
@@ -20,43 +37,48 @@
 % Option ordinalmonthday
 \define@boolkey{english}[english@]{ordinalmonthday}[true]{}
 
-\define@choicekey*+{english}{variant}[\val\nr]{uk,british,us,american,usmax,australian,newzealand,canadian}{%
+\define@choicekey*+{english}{variant}[\val\nr]{uk,british,us,american,usmax,australian,newzealand,canadian}[us]{%
    \ifcase\nr\relax
       % uk:
       \british@hyphentrue
       \british@dateformattrue
       \english@ordinalmonthdaytrue
+      \SetLanguageKeys{english}{babelname=british,bcp47=en-GB}%
       \xpg@info{Option: English, variant=british}%
    \or
       % british:
       \british@hyphentrue
       \british@dateformattrue
       \english@ordinalmonthdaytrue
+      \SetLanguageKeys{english}{babelname=british,bcp47=en-GB}%
       \xpg@info{Option: english variant=british}%
    \or
       % us:
       \british@hyphenfalse
       \british@dateformatfalse
       \english@ordinalmonthdayfalse
+      \SetLanguageKeys{english}{babelname=american,bcp47=en-US}%
       \xpg@info{Option: English, variant=american}%
    \or
       % american:
       \british@hyphenfalse
       \british@dateformatfalse
       \english@ordinalmonthdayfalse
+      \SetLanguageKeys{english}{babelname=american,bcp47=en-US}%
       \xpg@info{Option: English, variant=american}%
    \or
       % usmax:
       \british@hyphenfalse
       \british@dateformatfalse
       \english@ordinalmonthdayfalse
+      \SetLanguageKeys{english}{babelname=american,bcp47=en-US}%
       \xpg@info{Option: english variant=american (with additional patterns)}%
       \xpg@ifdefined{usenglishmax}{}%
          {\xpg@warning{No hyphenation patterns were loaded for "US English Max"\MessageBreak
                        I will use the standard patterns for US English instead}%
           \adddialect\l@usenglishmax\l@english\relax%
          }%
-      \gdef\english@variant{usenglishmax}%
+      \def\english@variant{usenglishmax}%
    \or
       % australian:
       % These use the british hyphenation patterns
@@ -64,7 +86,9 @@
       \british@hyphentrue
       \british@dateformattrue
       \english@ordinalmonthdayfalse
+      \SetLanguageKeys{english}{babelname=australian,bcp47=en-AU}%
       \xpg@info{Option: English, variant=australian}%
+      \adddialect\l@australian\l@english%
    \or
       % newzealand:
       % These use the british hyphenation patterns
@@ -72,14 +96,18 @@
       \british@hyphentrue
       \british@dateformattrue
       \english@ordinalmonthdayfalse
+      \SetLanguageKeys{english}{babelname=newzealand,bcp47=en-NZ}%
       \xpg@info{Option: English, variant=newzealand}%
+      \adddialect\l@newzealand\l@english%
    \or
       % canadian:
       % This is currently equivalent to usenglish (as in babel)
       \british@hyphenfalse
       \british@dateformatfalse
       \english@ordinalmonthdayfalse
+      \SetLanguageKeys{english}{babelname=canadian,bcp47=en-CA}%
       \xpg@info{Option: English, variant=american}%
+      \adddialect\l@canadian\l@english%
    \fi
    \ifbritish@hyphen
       \xpg@ifdefined{ukenglish}{}%
@@ -87,9 +115,15 @@
                        I will use the patterns for US English instead}%
           \adddialect\l@ukenglish\l@english\relax%
          }%
-      \gdef\english@variant{ukenglish}%
+      \def\english@variant{ukenglish}%
    \fi
 }{\xpg@warning{Unknown English variant `#1'}}
+
+% Register default options
+\xpg@initialize@gloss@options{english}{variant=us,ordinalmonthday=false}
+% Register alias options
+\xpg@set@alias@values{english}{variant}{us}{american}
+\xpg@set@alias@values{english}{variant}{uk}{british}
 
 \ifxetex
    % Check if \l@english is defined. If not, try to set it to some variety
@@ -110,12 +144,7 @@
 \fi
 
 \def\english@language{%
-   \ifxetex
-      \language=\csname l@\english@variant\endcsname
-   \fi
-   \ifluatex
-      \xpg@set@language@luatex@iv{\english@variant}
-   \fi
+   \polyglossia@setup@language@patterns{\english@variant}%
 }%
 
 \def\captionsenglish{%

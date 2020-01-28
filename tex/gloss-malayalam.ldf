@@ -8,6 +8,7 @@ and may look very wrong.}
 % Translations provided by Kevin & Siji, 01-11-2009
 
 \PolyglossiaSetup{malayalam}{
+  bcp47=ml,
   script=Malayalam,
   scripttag=mlym,
   langtag=MAL, %FIXME there is also MLR for "Malayalam Reformed"
@@ -15,6 +16,9 @@ and may look very wrong.}
   hyphenmins={2,2}, %FIXME
   fontsetup=true,
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{malayalam}{ml}
 
 \def\captionsmalayalam{%
      \def\abstractname{സാരാംശം}%

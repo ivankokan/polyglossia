@@ -1,5 +1,6 @@
 \ProvidesFile{gloss-bulgarian.ldf}[polyglossia: module for bulgarian]
 \PolyglossiaSetup{bulgarian}{
+  bcp47=bg,
   script=Cyrillic,
   scripttag=cyrl,
   langtag=BGR,
@@ -9,6 +10,9 @@
   fontsetup
   %TODO localalph=bulgarian@alph
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{bulgarian}{bg}
 
 \def\bulgarian@Alph#1{%
    \ifcase#1\or

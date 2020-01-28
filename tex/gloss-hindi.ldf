@@ -6,6 +6,7 @@
 \ProvidesFile{gloss-hindi.ldf}[polyglossia: module for hindi]
 \RequirePackage{devanagaridigits}
 \PolyglossiaSetup{hindi}{
+  bcp47=hi,
   script=Devanagari,
   scripttag=deva,
   langtag=HIN,
@@ -14,6 +15,9 @@
   localnumeral=hindinumerals
   %TODO nouppercase=true,
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{hindi}{hi}
 
 \ifx\l@hindi\@undefined%
   \ifx\l@sanskrit\@undefined%
@@ -26,7 +30,9 @@
   \fi
 \fi
 
-\def\hindi@language{\language=\l@hindi}
+\def\hindi@language{%
+  \polyglossia@setup@language@patterns{hindi}%
+}
 
 \def\tmp@western{Western}
 \newif\ifhindi@devanagari@numerals
@@ -36,7 +42,11 @@
   \def\@tmpa{#1}%
   \ifx\@tmpa\tmp@western
     \hindi@devanagari@numeralsfalse
-  \fi}
+  \fi%
+}
+
+% Register default options
+\xpg@initialize@gloss@options{hindi}{numerals=Devanagari}
 
 \newcommand{\hindinumerals}[2]{\hindinumber{#2}}
 

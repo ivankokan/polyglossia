@@ -1,6 +1,7 @@
 \ProvidesFile{gloss-romansh.ldf}[polyglossia: module for romansh]
 \makeatletter
 \PolyglossiaSetup{romansh}{%
+  bcp47=rm,
   hyphennames={romansh},
   hyphenmins={2,2},
   langtag=RMS,
@@ -8,6 +9,8 @@
   fontsetup=true,
 }
 
+% BCP-47 compliant aliases
+\setlanguagealias*{romansh}{rm}
 
 \def\captionsromansh{%
   \def\prefacename{Prefaziun}%

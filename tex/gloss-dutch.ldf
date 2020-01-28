@@ -1,5 +1,6 @@
 \ProvidesFile{gloss-dutch.ldf}[polyglossia: module for dutch]
 \PolyglossiaSetup{dutch}{
+  bcp47=nl,
   hyphennames={dutch},
   hyphenmins={2,2},
   langtag=NLD,
@@ -7,7 +8,13 @@
   fontsetup=true,
 }
 
+% BCP-47 compliant aliases
+\setlanguagealias*{dutch}{nl}
+
 \define@boolkey{dutch}[dutch@]{babelshorthands}[true]{}
+
+% Register default options
+\xpg@initialize@gloss@options{dutch}{babelshorthands=false}
 
 \ifsystem@babelshorthands
   \setkeys{dutch}{babelshorthands=true}
@@ -16,8 +23,9 @@
 \fi
 
 \ifcsundef{initiate@active@char}{%
-\input{babelsh.def}%
-\initiate@active@char{"}%
+  \input{babelsh.def}%
+  \initiate@active@char{"}%
+  \shorthandoff{"}%
 }{}
 
 \def\dutch@shorthands{%
@@ -60,11 +68,15 @@
     \def\alsoname{zie ook}%
     \def\proofname{Bewijs}%
     \def\glossaryname{Verklarende woordenlijst}%
+}
+
+\def\datedutch{%
     \def\today{\number\day~\ifcase\month%
       \or januari\or februari\or maart\or april\or mei\or juni\or
       juli\or augustus\or september\or oktober\or november\or
       december\fi
-      \space \number\year}}
+      \space \number\year}%
+}
 
 \def\noextras@dutch{%
   \nodutch@shorthands%

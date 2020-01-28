@@ -9,6 +9,7 @@ and may look very wrong.}
 \RequirePackage{devanagaridigits}
 
 \PolyglossiaSetup{sanskrit}{
+  bcp47=sa-Deva,
   langtag=SAN,
   hyphennames={sanskrit,prakrit},
   hyphenmins={1,3},
@@ -17,6 +18,16 @@ and may look very wrong.}
   localnumeral=sanskritnumerals
 }
 
+% BCP-47 compliant aliases
+\setlanguagealias*{sanskrit}{sa}
+\setlanguagealias*[script=Devanagari]{sanskrit}{sa-Deva}
+\setlanguagealias*[script=Malayalam]{sanskrit}{sa-Mlym}
+\setlanguagealias*[script=Telugu]{sanskrit}{sa-Telu}
+\setlanguagealias*[script=Bengali]{sanskrit}{sa-Beng}
+\setlanguagealias*[script=Kannada]{sanskrit}{sa-Knda}
+\setlanguagealias*[script=Gujarati]{sanskrit}{sa-Gujr}
+\setlanguagealias*[script=Latin]{sanskrit}{sa-Latn}
+
 \define@key{sanskrit}{Script}[Devanagari]{%
   \ifcsdef{fontsetup@sanskrit@#1}%
     {\csname fontsetup@sanskrit@#1\endcsname}%
@@ -24,40 +35,48 @@ and may look very wrong.}
   }%
 }
 
+\define@key{sanskrit}{script}[Devanagari]{\setkeys{sanskrit}{Script=#1}}
+
 \def\fontsetup@sanskrit@Devanagari{%
-  \polyglossia@buggykeyssetlanguage{sanskrit}{script=deva}
+  \SetLanguageKeys{sanskrit}{scripttag=deva,script=Devanagari,bcp47=sa-Deva}
   \xpg@fontsetup@nonlatin{sanskrit}}
 \def\fontsetup@sanskrit@Gujarati{%
-  \polyglossia@buggykeyssetlanguage{sanskrit}{script=gujr}
+  \SetLanguageKeys{sanskrit}{scripttag=gujr,script=Gujarati,bcp47=sa-Gujr}
   \xpg@fontsetup@nonlatin{sanskrit}}
 \def\fontsetup@sanskrit@Malayalam{%
-  \polyglossia@buggykeyssetlanguage{sanskrit}{script=mlym}
+  \SetLanguageKeys{sanskrit}{scripttag=mlym,script=Malayalam,bcp47=sa-Mlym}
   \xpg@fontsetup@nonlatin{sanskrit}}
 \def\fontsetup@sanskrit@Bengali{%
-  \polyglossia@buggykeyssetlanguage{sanskrit}{script=beng}
+  \SetLanguageKeys{sanskrit}{scripttag=beng,script=Bengali,bcp47=sa-Beng}
   \xpg@fontsetup@nonlatin{sanskrit}}
 \def\fontsetup@sanskrit@Kannada{%
-  \polyglossia@buggykeyssetlanguage{sanskrit}{script=knda}
+  \SetLanguageKeys{sanskrit}{scripttag=knda,script=Kannada,bcp47=sa-Knda}
   \xpg@fontsetup@nonlatin{sanskrit}}
 \def\fontsetup@sanskrit@Telugu{%
-  \polyglossia@buggykeyssetlanguage{sanskrit}{script=telu}
+  \SetLanguageKeys{sanskrit}{scripttag=telu,script=Telugu,bcp47=sa-Relu}
   \xpg@fontsetup@nonlatin{sanskrit}}
 \def\fontsetup@sanskrit@Latin{%
-    \polyglossia@buggykeyssetlanguage{sanskrit}{script=latn}
-    \xpg@fontsetup@latin{sanskrit}}
+  \SetLanguageKeys{sanskrit}{scripttag=latn,script=Latin,bcp47=sa-Latn}
+  \xpg@fontsetup@latin{sanskrit}}
 
-\setkeys{sanskrit}{Script} %sets the default for Devanagari
 
-\def\tmp@western{Western}
 \newif\ifsanskrit@devanagari@numerals
 \sanskrit@devanagari@numeralstrue
+\define@choicekey*+{sanskrit}{numerals}[\val\nr]{Devanagari,Western}[Devanagari]{%
+   \ifcase\nr\relax
+      % Devanagari:
+      \sanskrit@devanagari@numeralstrue%
+   \or
+      % Western:
+      \sanskrit@devanagari@numeralsfalse%
+   \fi
+   \xpg@info{Option: Sanskrit, numerals=\val}%
+}{\xpg@warning{Unknown Sanskrit numeral `#1'}}
 
-\define@key{sanskrit}{numerals}[Devanagari]{%
-  \def\@tmpa{#1}%
-  \ifx\@tmpa\tmp@western
-    \sanskrit@devanagari@numeralsfalse
-  \fi%
-}
+
+% Register default options
+\xpg@initialize@gloss@options{sanskrit}{script=Devanagari,numerals=Devanagari}
+
 
 \newcommand{\sanskritnumerals}[2]{\sanskritnumber{#2}}
 
@@ -69,34 +88,50 @@ and may look very wrong.}
   \fi%
 }
 
-% FIXME: Support LuaTeX
-\ifxetex
-  \newXeTeXintercharclass\sanskrit@punctthin % ! ? ; : danda double_danda
+\ifluatex
+  \directlua{require('polyglossia-sanskrit')}%
+\else
+  \newXeTeXintercharclass\sanskrit@questionexclamation % ! ? ‼ ⁇ ⁈ ⁉ ‽
+  \newXeTeXintercharclass\sanskrit@punctthin % : ; danda double_danda
 \fi
 
 \def\sanskrit@punctthinspace{{\unskip\thinspace}}
 
 \def\sanskrit@punctuation{%
-  % FIXME: Support LuaTeX
-  \ifxetex
+  \ifluatex
+    \directlua{polyglossia.activate_sanskrit_punct()}%
+  \else
     \XeTeXinterchartokenstate=1%
-    \XeTeXcharclass `\! \sanskrit@punctthin
-    \XeTeXcharclass `\? \sanskrit@punctthin
-    \XeTeXcharclass `\; \sanskrit@punctthin
+    \XeTeXcharclass `\! \sanskrit@questionexclamation
+    \XeTeXcharclass `\? \sanskrit@questionexclamation
+    \XeTeXcharclass `\‼ \sanskrit@questionexclamation
+    \XeTeXcharclass `\⁇ \sanskrit@questionexclamation
+    \XeTeXcharclass `\⁈ \sanskrit@questionexclamation
+    \XeTeXcharclass `\⁉ \sanskrit@questionexclamation
+    \XeTeXcharclass `\‽ \sanskrit@questionexclamation % interrobang, U+203D
     \XeTeXcharclass `\: \sanskrit@punctthin
-    \XeTeXcharclass `\। \sanskrit@punctthin
-    \XeTeXcharclass `\॥ \sanskrit@punctthin
+    \XeTeXcharclass `\; \sanskrit@punctthin
+    \XeTeXcharclass `\। \sanskrit@punctthin % danda, U+0964
+    \XeTeXcharclass `\॥ \sanskrit@punctthin % double danda, U+0965
+    \XeTeXinterchartoks \z@ \sanskrit@questionexclamation = \sanskrit@punctthinspace
     \XeTeXinterchartoks \z@ \sanskrit@punctthin = \sanskrit@punctthinspace
+    \XeTeXinterchartoks \sanskrit@questionexclamation \sanskrit@punctthin = \sanskrit@punctthinspace
   \fi
 }
 
 \def\nosanskrit@punctuation{%
-  % FIXME: Support LuaTeX
-  \ifxetex
+  \ifluatex
+    \directlua{polyglossia.deactivate_sanskrit_punct()}%
+  \else
     \XeTeXcharclass `\! \z@
     \XeTeXcharclass `\? \z@
-    \XeTeXcharclass `\; \z@
+    \XeTeXcharclass `\‼ \z@
+    \XeTeXcharclass `\⁇ \z@
+    \XeTeXcharclass `\⁈ \z@
+    \XeTeXcharclass `\⁉ \z@
+    \XeTeXcharclass `\‽ \z@
     \XeTeXcharclass `\: \z@
+    \XeTeXcharclass `\; \z@
     \XeTeXcharclass `\। \z@
     \XeTeXcharclass `\॥ \z@
     \XeTeXinterchartokenstate=0%

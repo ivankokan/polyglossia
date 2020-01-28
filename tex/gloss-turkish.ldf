@@ -1,6 +1,7 @@
 \ProvidesFile{gloss-turkish.ldf}[polyglossia: module for turkish]
 \RequirePackage{hijrical}
 \PolyglossiaSetup{turkish}{
+  bcp47=tr,
   hyphennames={turkish},
   hyphenmins={2,2},
   langtag=TRK,
@@ -27,6 +28,9 @@
    \XeTeXinterchartoks \z@ \turkish@punctthick = \turkish@punctthickspace
    \fi
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{turkish}{tr}
 
 \def\noturkish@punctuation{%
    \ifxetex

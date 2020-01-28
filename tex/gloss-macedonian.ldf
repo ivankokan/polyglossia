@@ -1,5 +1,6 @@
 \ProvidesFile{gloss-macedonian.ldf}[polyglossia: module for macedonian]
 \PolyglossiaSetup{macedonian}{
+  bcp47=mk,
   script=Cyrillic,
   scripttag=cyrl,
   langtag=MKD,
@@ -8,6 +9,9 @@
   frenchspacing=true,
   fontsetup
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{macedonian}{mk}
 
 \def\macedonian@Alph#1{%
    \ifcase#1\or

@@ -1,6 +1,7 @@
 \ProvidesFile{gloss-armenian.ldf}[polyglossia: module for armenian]
 
 \PolyglossiaSetup{armenian}{
+  bcp47=hy,
   script=Armenian,
   scripttag=armn,
   langtag=HYE,
@@ -9,6 +10,9 @@
   fontsetup=true,
   localnumeral=armeniannumerals
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{armenian}{hy}
 
 \newif\if@eastern@armenian
 \@eastern@armenianfalse
@@ -28,6 +32,9 @@
 \define@key{armenian}{numerals}[armenian]{%
   \ifstrequal{#1}{arabic}{\@armenian@numeralsfalse}{\@armenian@numeralstrue}%
 }
+
+% Register default options
+\xpg@initialize@gloss@options{armenian}{numerals=armenian,variant=western}
 
 % Taken from ArmTeX. Audit!
 \def\captionsarmenian{%
@@ -95,6 +102,7 @@
      \date@eastern@armenian%
   \else
      \date@western@armenian%
+  \fi
 }
 
 \newcommand{\armeniannumerals}[2]{%

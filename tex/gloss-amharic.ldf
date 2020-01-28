@@ -1,5 +1,6 @@
 \ProvidesFile{gloss-amharic.ldf}[polyglossia: module for amharic]
 \PolyglossiaSetup{amharic}{
+  bcp47=am,
   script=Ethiopic,
   scripttag=ethi,
   langtag=AMH,
@@ -8,6 +9,9 @@
   fontsetup=true,
   %TODO localalph=ethnum
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{amharic}{am}
 
 \def\captionsamharic{%
    \def\refname{የነሥ ጹሁፍ ምንጭ}%

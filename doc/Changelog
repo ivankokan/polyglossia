@@ -1,13 +1,152 @@
-1.45 (????)
+1.47 (???)
 
 New features:
+  * IETF BCP-47 compliant language tags can now be used for loading and switching
+    languages alternatively to language names (#226).
+  * New commands \languageid{<type>} and \mainlanguageid{<type>}.
+  * New test \iflanguageidloaded.
+  * New list \xpg@bcp@loaded.
+  * New environment {lang}{<lang>} (equivalent to {<lang>},  but also available with
+    \setlanguagealias* which does not define dedicated alias environments).
+  * New gloss option totalhyphenmin (corresponds to LuaTeX's \hyphenationmin) (#111).
+  * New test \iflanguageoption{<lang>}{<key>}{<val>} (#364).
+  * Restore simple alphabetic numbering for \asbuk and \Asbuk in Belarusian, Mongolian,
+    Russian, Serbian, and Ukrainian (#377).
+  * New command \AsbukTrad and \asbukTrad for Belarusian, Mongolian, Russian, Serbian,
+    and Ukrainian which uses traditional alphanumerical numbering.
+  * New numerals option "cyrillic-trad" and "cyrillic-alph" to differentiate simple
+    alphabetic and traditional alpnanumerical Cyrillic numbering.
+  * \selectbackgroundlanguage and \resetdefaultlanguage now also support language
+    aliases.
+  * New macro \charifavailable{<char code>}{<substitution>}.
+  * Add French language variant "swiss".
+  * Implement babelshorthands for Croatian.
+
+Bug fixes:
+  * Fix font family issue in headers (#355).
+  * Fix whitespace issues in \text<lang> (#356).
+  * Fix option-less \babelname in multi-variant languages (#357).
+  * Fix some spacing inconsistencies with French, Latin, and Sanskrit (#358).
+  * Fix issues with babelshorthands and graphics package (#368).
+  * Fix some captions and improve numbering in Marathi (#370).
+  * Fix Hungarian swapstrings feature (#373).
+  * Fix lua punctuation code problem (#374).
+  * Fix Bengali changecounternumbering option (#381).
+  * Fix \text<lang> command with multiple paragraphs.
+  * Actually implement documented german spelling variant '1996' (= 'new').
+  * Fix Slovenian localalph option.
+  * Fix Czech and Slovak splithyphens with typewriter fonts.
+  * farsical.sty: fix spacing issue with some month names.
+  * Fix directionalty of numbers in Hebrew with XeTeX.
+  * Improve interoperatability with biblatex (some language variants did not work yet).
+
+Interface and defaults changes:
+  * Some boolean options had 'false' value by default, which meant if you passed
+    them without value, the logic was reversed. This has been changed, leading to
+    change of behavior should you have used one of these options without value (#363).
+    Concerned are the following options:
+    - babelshorthands in language belarusian, mongolian, ukrainian, and russian
+      ('babelshorthands' now equals 'babelshorthand=true', no longer 'babelshorthands=false')
+    - localalph in language slovenian ('localalph' now equals 'localalph=true')
+    - latesthyphen in language german ('latesthyphen' now equals 'latesthyphen=true')
+    - fullyear in package hebrewcal ('fullyear' now equals 'fullyear=true')
+  * The command \setlanguagealias* (introduced in v1.46) does no longer define
+    dedicated alias environments.
+  * The babelnames for latin variants have been corrected to classiclatin, ecclesiasticlatin
+    and medievallatin. This is how the hyphenation patterns and babel \extras are named, even
+    though the variants can currently be selected in babel only via appended "dot modifier".
+  * In accordance with the respective l3kernel change, \str_lower_case:n  has been renamed to
+    \str_lowercase:n where used in polyglossia.sty. Thus polyglossia 1.47 requires l3kernel
+    2020-01-12 at least.
+
+1.46 (15-11-2019)
+
+New features:
+  * Add option "indentfirst" to Russian (#78).
+  * Add options to set and customize French-style itemize item labels to French (#89).
+  * Polyglossia now understands all babel language names in \setdefaultlanguage,
+    \setotherlanguage and the language switching commands (#112, #132).
+  * Add optional localized math operators to Spanish (#123).
+  * Swap section headings in Hungarian (#344). New option "swapstrings" provides control
+    over this.
+  * Introduce macro \setlanguagealias and \setlanguagealias*.
+  * Introduce language switching command \textlang{lang}{...} (equivalent to \text<lang>,
+    but also available with \setlanguagealias* which does not define \text<alias>).
+  * Add support for Afrikaans.
+  * Add support for Belarusian.
+  * Add support for Bosnian.
+  * Add support for Georgian.
+  * Add Spanish variant "mexican".
+  * Add babelshorthands as well as options "splithyphens" and "vlna" to Slovak.
+  * Add Latin language variant "ecclesiastic".
+  * Add Latin language options "capitalizemonth", "ecclesiasticfootnotes", "hyphenation",
+    "prosodicshorthands", and "usej".
+  * Add Latin shorthands for "«", "»", "æ", "Æ", "œ", and "Œ".
+  * Add French language option "thincolonspace".
+
+Bug fixes:
+  * Fix problems with fragile font settings (#24).
+  * Fix clash of French punctuation spacing with the soul package (#52).
+  * Re-enable the possibility to pass a macro as main argumente to \setmainlanguage and
+    \setotherlanguage (#331).
+  * Fix detection of default \languagevariant (#332).
+  * Fix LaTeX error with undefined hyphenation pattern (#346).
+  * Fix some babel shorthand issues by updating the shorthand code from recent babel.
+  * Fix some problems with French and Latin auto-spacing (#345, #352).
+  * Fix an expl3 declaration (#348).
+
+Interface and defaults changes:
+  * Per TeXLive request, the sub-package cyrillicnumbers.sty has been renamed to
+    xpg-cyrillicnumbers.sty.
+  * In Russian, all paragraphs are now indented by default, as common in Russian typography.
+    The behavior can be opted out by indentfirst=false.
+  * In Czech, splithyphens and lvna are enabled by default. Also, the option does now work
+    as well with LuaTeX.
+  * Changed option name "fraktur" to "blackletter" in German (the former is still available
+    as an alias).
+  * In French, high punctuation characters and guillemets are spaced by half an interword
+    space now instead of a \thinspace (cf. #345).
+
+1.45 (27-10-2019)
+
+New features:
+  * Introduce a framework for external packages to access language variants. This fixes,
+    among other things, long-standing problems in the interaction of biblatex and polyglossia.
+  * Add new macros \languagevariant, \mainlanguagevariant, \babelname and \mainbabelname
+    for package authors to access language information.
+  * Add new test \iflanguageloaded{<language>}{<true>}{<false>}, where <language>
+    can be a \polyglossia or babel language name.
   * Add new macros \localnumeral, \localnumeral*, \Localnumeral and
     \Localnumeral* that convert Arabic digitals to the local number scheme.
-  * Add support for (Sorani) Kurdish (#277).
+  * Add new macro \pghyphenation to add language-specific hyphenation exceptions (#18).
+  * Add support form (Khalkha & Cyrillic) Mongolian in line with babel-mongolian (#23).
+  * Add option splithyphens and vlna to Czech (XeTeX only; for LuaTeX, use the package
+    luavlna to get these features) (#32).
+  * Add support for Kurdish, both Kurmanji and Sorani (#277).
   * Implement proper Cyrillic (alphanumeric) numbering (#285).
+  * Add new language friulian.
+    This deprecates friulan (which is still supported for backwards compatibility).
+  * Add new language malay with variants indonesian and malaysian.
+    This deprecates bahasai and bahasam (which are still supported for
+    backwards compatibility).
+  * Add new language gaelic with variants irish and scottish.
+    This deprecates irish and scottish as own polyglossia languages (which
+    are still supported for backwards compatibility).
+  * Add new language hungarian.
+    This deprecates magyar (which is still supported for backwards compatibility).
+  * Add new language sorbian with variants lower and upper.
+    This deprecates lsorbian and usorbian (which are still supported for
+    backwards compatibility).
   * Add new language portuguese with variants portuguese and brazilian.
     This deprecates brazil and portuges (which are still supported for
     backwards compatibility).
+  * Add new language norwegian with variants nynorsk and bokmal.
+    This deprecates nynorsk and norsk (which are still supported for
+    backwards compatibility).
+  * Add new language persian.
+    This deprecates farsi (which is still supported for backwards compatibility).
+  * Add new language sami. Currently only Northern Sami is supported.
+    This deprecates samin (which is still supported for backwards compatibility).
   * gloss-serbian: add numerals=cyrillic option. Add \asbuk and \Asbuk (#285).
   * Implement basic support for (French) canadien and (English) canadian (#22)
   * Improve support for Armenian (#79): Add captions, Eastern month names
@@ -16,7 +155,8 @@ New features:
   * Add french option autospacing and commands \AutoSpacing, \NoAutoSpacing
     This allows to switch off autospacing globally or locally (#113)
   * Fixup \normalfont (#203)
-  * Implement babelshorthands for Finnish (#212)
+  * Fix directionality issues in mixed RTL/LTR paragraphs (#204)
+  * Implement babelshorthands for Finnish (#212) and Czech.
   * Implement access to current language via Lua (#243).
   * Introduce french option option autospacetypewriter
     alias OriginalTypewriter
@@ -31,6 +171,8 @@ Bug fixes:
   * Fix N'ko date format (#63).
   * Disable the extras of a language when a nested language starts (#66, #169).
   * Properly implement bengali numbers (#69, #184).
+  * Fix conflicts with other packages caused by premature shorthand activation
+    in preamble (#81, #200).
   * Fix kerning in math with French (#92).
   * Fix expansion issue in Hebrew (#93).
   * Fix numbering expansion issue in Greek (#110).

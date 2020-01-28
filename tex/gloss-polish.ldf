@@ -1,11 +1,15 @@
 \ProvidesFile{gloss-polish.ldf}[polyglossia: module for polish]
 \PolyglossiaSetup{polish}{
+  bcp47=pl,
   hyphennames={polish},
   hyphenmins={2,2},
   langtag=PLK,
   frenchspacing=true,
   fontsetup=true,
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{polish}{pl}
 
 \def\captionspolish{%
   \def\prefacename{Przedmowa}%

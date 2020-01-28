@@ -8,6 +8,7 @@ and may look very wrong.}
 % Translations provided by Anmol Sharma <unmole.in@gmail.com>
 
 \PolyglossiaSetup{telugu}{
+  bcp47=te,
   script=Telugu,
   scripttag=telu,
   langtag=TEL,
@@ -15,6 +16,9 @@ and may look very wrong.}
   hyphenmins={2,2}, %FIXME
   fontsetup=true,
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{telugu}{te}
 
 \def\captionstelugu{%
    \def\refname{ఆధారాలు}%

@@ -1,6 +1,7 @@
 \ProvidesFile{gloss-french.ldf}[polyglossia: module for french]
 
 \PolyglossiaSetup{french}{%
+  bcp47=fr-FR,
   language=French,
   script=Latin,
   langtag=FRA,
@@ -10,46 +11,63 @@
   hyphenmins={2,2},
   fontsetup=true}
 
+% BCP-47 compliant aliases
+\setlanguagealias*{french}{fr}
+\setlanguagealias*[variant=french]{french}{fr-FR}
+\setlanguagealias*[variant=canadian]{french}{fr-CA}
+\setlanguagealias*[variant=swiss]{french}{fr-CH}
+
+% Babel aliases
+\setlanguagealias[variant=acadian]{french}{acadien}
+\setlanguagealias[variant=canadian]{french}{canadien}
+
 \def\french@variant{french}
-\define@choicekey*+{french}{variant}[\val\nr]{french,canadian,acadian}[french]{%
+\define@choicekey*+{french}{variant}[\val\nr]{french,canadian,acadian,swiss}[french]{%
    \ifcase\nr\relax
       % french:
-      \gdef\french@variant{french}%
+      \def\french@variant{french}%
+      \SetLanguageKeys{french}{babelname=french,bcp47=fr-FR}%
+      \french@thincolonspacefalse
    \or
       % canadian:
-      \gdef\french@variant{canadien}%
+      \def\french@variant{canadien}%
+      \SetLanguageKeys{french}{babelname=canadien,bcp47=fr-CA}%
       \xpg@ifdefined{canadien}{}%
-	    {\xpg@warning{No hyphenation patterns were loaded for "French (Canada)"\MessageBreak
-	      I will use the standard patterns for French instead}%
-	    \adddialect\l@canadien\l@french\relax}%
+      {\xpg@warning{No hyphenation patterns were loaded for "French (Canada)"\MessageBreak
+        I will use the standard patterns for French instead}%
+      \adddialect\l@canadien\l@french\relax}%
+      \french@thincolonspacefalse
    \or
       % acadian:
-      \gdef\french@variant{acadian}%
+      \def\french@variant{acadian}%
+      \SetLanguageKeys{french}{babelname=canadien,bcp47=fr-CA}%
       \xpg@ifdefined{acadian}{}%
-	    {\xpg@warning{No hyphenation patterns were loaded for "French (Canada)"\MessageBreak
-	      I will use the standard patterns for French instead}%
-	    \adddialect\l@acadian\l@french\relax}%
+      {\xpg@warning{No hyphenation patterns were loaded for "French (Canada)"\MessageBreak
+        I will use the standard patterns for French instead}%
+      \adddialect\l@acadian\l@french\relax}%
+      \french@thincolonspacefalse
+   \or
+      % swiss:
+      \def\french@variant{swissfrench}%
+      \SetLanguageKeys{french}{babelname=french,bcp47=fr-CH}%
+      \adddialect\l@swissfrench\l@french\relax%
+      \french@thincolonspacetrue
    \fi
    \xpg@info{Option: French, variant=\val}%
 }{\xpg@warning{Unknown French variant `#1'}}
 
 
 \def\french@language{%
-   \ifxetex
-      \language=\csname l@\french@variant\endcsname
-   \fi
-   \ifluatex
-      \xpg@set@language@luatex@iv{\french@variant}
-   \fi
+   \polyglossia@setup@language@patterns{\french@variant}%
 }%
 
 \ifluatex
-  \newluatexattribute\xpg@frpt %
-  \directlua{polyglossia.load_frpt()}%
+  \directlua{require('polyglossia-french')}%
 \else
-  \newXeTeXintercharclass\french@openbrackets % ( ] {
-  \newXeTeXintercharclass\french@closebrackets % ( ] {
-  \newXeTeXintercharclass\french@punctthin % ! ? ; et autres
+  \newXeTeXintercharclass\french@openbrackets % ( [ {
+  \newXeTeXintercharclass\french@closebrackets % ) ] }
+  \newXeTeXintercharclass\french@questionexclamation % ! ? et autres
+  \newXeTeXintercharclass\french@punctthin % ; (et :)
   \newXeTeXintercharclass\french@punctthick % :
   \newXeTeXintercharclass\french@punctguillstart % « ‹
   \newXeTeXintercharclass\french@punctguillend % » ›
@@ -61,18 +79,22 @@
 \let\xpg@orig@makefntext\@makefntext
 
 \define@boolkey{french}[french@]{frenchfootnote}[true]{%
-   \iffrench@frenchfootnote
-      \ifx\@makefntext\undefined\else        
-          \long\def\french@makefntext##1{%
-               \parindent1em \noindent\quad%
-               \ifx\@thefnmark\empty\else%
-               \@thefnmark.\space\fi ##1%
-          }
-          \let\@makefntext\french@makefntext
-      \fi
-   \else
-      \let\@makefntext\xpg@orig@makefntext
-   \fi
+  \AfterPreamble{%
+    \iffrench@frenchfootnote
+      \ifdefstring{\xpg@main@language}{french}{%
+         \ifx\@makefntext\undefined\else
+             \long\def\french@makefntext##1{%
+                \parindent1em \noindent\quad%
+                \ifx\@thefnmark\empty\else%
+                \@thefnmark.\space\fi ##1%
+             }
+             \let\@makefntext\french@makefntext
+         \fi
+      }{\xpg@warning{Option 'frenchfootnote' only supported if French is main language!}}%
+    \else
+       \let\@makefntext\xpg@orig@makefntext
+    \fi
+  }%
 }
 
 \define@boolkey{french}[french@]{autospacing}[true]{}
@@ -81,6 +103,10 @@
 \newif\iffrench@autospaceguillemets
 \define@boolkey{french}[french@]{autospaceguillemets}[true]{}
 \french@autospaceguillemetstrue
+
+\newif\iffrench@thincolonspace
+\define@boolkey{french}[french@]{thincolonspace}[true]{}
+\french@thincolonspacefalse
 
 % Backwards compatibility
 \define@boolkey{french}[french@]{automaticspacesaroundguillemets}[true]{%
@@ -108,6 +134,60 @@
    \fi
 }
 
+% Configuration of item labels
+\def\french@itemi{\textemdash}
+\def\french@itemii{\textemdash}
+\def\french@itemiii{\textemdash}
+\def\french@itemiv{\textemdash}
+
+\define@key{french}{itemlabels}[\textemdash]{%
+  \def\french@itemi{#1}
+  \def\french@itemii{#1}
+  \def\french@itemiii{#1}
+  \def\french@itemiv{#1}
+}
+
+\define@key{french}{itemlabeli}[\textemdash]{%
+  \def\french@itemi{#1}
+}
+
+\define@key{french}{itemlabelii}[\textemdash]{%
+  \def\french@itemii{#1}
+}
+
+\define@key{french}{itemlabeliii}[\textemdash]{%
+  \def\french@itemiii{#1}
+}
+
+\define@key{french}{itemlabeliv}[\textemdash]{%
+  \def\french@itemiv{#1}
+}
+
+\define@boolkey{french}[french@]{frenchitemlabels}[true]{%
+  \AfterPreamble{%
+    \iffrench@frenchitemlabels
+      \ifdefstring{\xpg@main@language}{french}{%
+         \renewcommand{\labelitemi}{\french@itemi}%
+         \renewcommand{\labelitemii}{\french@itemii}%
+         \renewcommand{\labelitemiii}{\french@itemiii}%
+         \renewcommand{\labelitemiv}{\french@itemiv}%
+      }{\xpg@warning{Option 'frenchitemlabels' only supported if French is main language!}}%
+    \else
+       \let\@makefntext\xpg@orig@makefntext
+    \fi
+  }%
+}
+
+% Register default options
+\xpg@initialize@gloss@options{french}{variant=french,autospacing=true,thincolonspace=false,
+                                      autospaceguillemets=true,autospacetypewriter=false,
+                                      frenchfootnote=false,frenchitemlabels=false,
+                                      itemlabels=\textemdash,itemlabeli=\textemdash,itemlabelii=\textemdash,
+                                      itemlabeliii=\textemdash,itemlabeliv=\textemdash}
+% Register alias options
+\xpg@set@alias@values{french}{variant}{canadian}{acadian}
+
+
 \def\french@fontsetup{%
   \unless\iffrench@autospacetypewriter
     \let\ttfamily\french@ttfamilyFB
@@ -119,64 +199,90 @@
   \let\ttfamily\french@ttfamilyORI
 }
 
+\def\xpg@french@thinsp{\kern 0.5\fontdimen2\font}
+
 \def\french@punctuation{%
     \lccode"2019="2019
     \ifluatex
-      \xpg@frpt=1\relax %
-      \directlua{polyglossia.activate_frpt()}%
+      \iffrench@thincolonspace
+        \iffrench@autospaceguillemets
+          \directlua{polyglossia.activate_french_punct(true, true)}%
+        \else
+          \directlua{polyglossia.activate_french_punct(true, false)}%
+        \fi
+      \else
+        \iffrench@autospaceguillemets
+          \directlua{polyglossia.activate_french_punct(false, true)}%
+        \else
+          \directlua{polyglossia.activate_french_punct(false, false)}%
+        \fi
+      \fi
     \else
       \XeTeXinterchartokenstate=1
-      \XeTeXcharclass `\! \french@punctthin
-      \XeTeXcharclass `\? \french@punctthin
-      \XeTeXcharclass `\‼ \french@punctthin
-      \XeTeXcharclass `\⁇ \french@punctthin
-      \XeTeXcharclass `\⁈ \french@punctthin
-      \XeTeXcharclass `\⁉ \french@punctthin
+      \XeTeXcharclass `\! \french@questionexclamation
+      \XeTeXcharclass `\? \french@questionexclamation
+      \XeTeXcharclass `\‼ \french@questionexclamation
+      \XeTeXcharclass `\⁇ \french@questionexclamation
+      \XeTeXcharclass `\⁈ \french@questionexclamation
+      \XeTeXcharclass `\⁉ \french@questionexclamation
+      \XeTeXcharclass `\‽ \french@questionexclamation % U+203D (interrobang)
       \XeTeXcharclass `\; \french@punctthin
-      \XeTeXcharclass `\: \french@punctthick
+      \iffrench@thincolonspace
+        \XeTeXcharclass `\: \french@punctthin
+      \else
+        \XeTeXcharclass `\: \french@punctthick
+      \fi
       \XeTeXcharclass `\« \french@punctguillstart
       \XeTeXcharclass `\» \french@punctguillend
       \XeTeXcharclass `\‹ \french@punctguillstart
       \XeTeXcharclass `\› \french@punctguillend
       \XeTeXcharclass `\( \french@openbrackets
       \XeTeXcharclass `\) \french@closebrackets
-      \XeTeXcharclass `\] \french@openbrackets
-      \XeTeXcharclass `\[ \french@closebrackets
+      \XeTeXcharclass `\[ \french@openbrackets
+      \XeTeXcharclass `\] \french@closebrackets
       \XeTeXcharclass `\{ \french@openbrackets
       \XeTeXcharclass `\} \french@closebrackets
-      \XeTeXinterchartoks \z@ \french@punctthin = {\thinspace}%
+      \XeTeXcharclass `\⟨ \french@openbrackets
+      \XeTeXcharclass `\⟩ \french@closebrackets
+      \XeTeXinterchartoks \z@ \french@questionexclamation = {\xpg@french@thinsp}%
+      \XeTeXinterchartoks \z@ \french@punctthin = {\xpg@french@thinsp}%
       \XeTeXinterchartoks \z@ \french@punctthick = {\nobreakspace}%
-      \XeTeXinterchartoks \xpg@boundaryclass \french@punctthin = {\xpg@unskip\thinspace}%
+      \XeTeXinterchartoks \xpg@boundaryclass \french@questionexclamation = {\xpg@unskip\xpg@french@thinsp}%
+      \XeTeXinterchartoks \xpg@boundaryclass \french@punctthin = {\xpg@unskip\xpg@french@thinsp}%
       \XeTeXinterchartoks \xpg@boundaryclass \french@punctthick = {\xpg@unskip\nobreakspace}%
       \iffrench@autospaceguillemets
-        \XeTeXinterchartoks \french@punctguillstart \z@ = {\thinspace}% "«a" -> "«\,a"
-  %     \XeTeXinterchartoks \z@ \french@punctguillstart = {\nobreakspace}% "a«" unchanged?
-  %     \XeTeXinterchartoks \french@punctguillend \z@ = {\nobreakspace}% "»a" unchanged?
-        \XeTeXinterchartoks \z@ \french@punctguillend = {\thinspace}% "a»" -> "a\,»"
-        \XeTeXinterchartoks \french@punctguillstart \xpg@boundaryclass = {\thinspace\ignorespaces}% "«  " -> "«\,"
-        \XeTeXinterchartoks \xpg@boundaryclass \french@punctguillend = {\xpg@unskip\thinspace}% "  »" -> "\,»"
+        \let\xpg@french@guillspace\xpg@french@thinsp%
+        \XeTeXinterchartoks \french@punctguillstart \z@ = {\xpg@french@guillspace}% "«a" -> "«\,a"
+        \XeTeXinterchartoks \french@punctguillstart \french@punctguillstart = {\xpg@french@guillspace}% "«‹" -> "«\,‹"
+ %      \XeTeXinterchartoks \z@ \french@punctguillstart = {\nobreakspace}% "a«" unchanged?
+ %      \XeTeXinterchartoks \french@punctguillend \z@ = {\nobreakspace}% "»a" unchanged?
+        \XeTeXinterchartoks \z@ \french@punctguillend = {\xpg@french@guillspace}% "a»" -> "a\,»"
+        \XeTeXinterchartoks \french@punctguillstart \xpg@boundaryclass = {\xpg@french@guillspace\ignorespaces}% "«  " -> "«\,"
+        \XeTeXinterchartoks \xpg@boundaryclass \french@punctguillend = {\xpg@unskip\xpg@french@guillspace}% "  »" -> "\,»"
+        \XeTeXinterchartoks \french@closebrackets \french@punctguillend = {\xpg@french@guillspace}% ")»" -> ")\,»"
+        \XeTeXinterchartoks \french@questionexclamation \french@punctguillend  = {\xpg@french@guillspace}% "?»" -> "?\,»"
+        \XeTeXinterchartoks \french@punctthin \french@punctguillend  = {\xpg@french@guillspace}% ";»" -> ";\,»"
+        \XeTeXinterchartoks \french@punctguillend \french@punctguillend  = {\xpg@french@guillspace}% "›»" -> "›\,»"
+     \else
+       \def\xpg@french@guillspace{}%
      \fi
-     \XeTeXinterchartoks \french@punctguillend \french@punctthin = {\thinspace}% "»;" -> "»\,;"
+     \XeTeXinterchartoks \french@punctguillend \french@questionexclamation = {\xpg@french@thinsp}% "»?" -> "»\,?"
+     \XeTeXinterchartoks \french@punctguillend \french@punctthin = {\xpg@french@thinsp}% "»;" -> "»\,;"
      \XeTeXinterchartoks \french@punctguillend \french@punctthick = {\nobreakspace}% "»:" -> "» :"
-     \XeTeXinterchartoks \french@punctthin \french@punctguillend  = {\thinspace}% "?»" -> "?\,»"
-     \XeTeXinterchartoks \french@openbrackets \french@punctthin = {\xpg@unskip}% "(?" -> "(?" and not "( ?"      
+     \XeTeXinterchartoks \french@questionexclamation \french@punctthin = {\xpg@french@thinsp}% "?;" -> "?\,;"
+     \XeTeXinterchartoks \french@questionexclamation \french@punctthick = {\xpg@french@thinsp}% "?:" -> "?\,:"
+     \XeTeXinterchartoks \french@openbrackets \french@questionexclamation = {\xpg@unskip}% "(?" -> "(?" and not "( ?"
+     \XeTeXinterchartoks \french@openbrackets \french@punctthin = {\xpg@unskip}% "(;" -> "(;" and not "( ;"
      \XeTeXinterchartoks \french@punctthin \french@closebrackets = {\xpg@unskip}% "?)" -> "?)" (code not need, just for symetry with previous one)
-     \XeTeXinterchartoks \french@closebrackets \french@punctthin = {\thinspace}% ")?" -> ")\,?"
+     \XeTeXinterchartoks \french@closebrackets \french@punctthin = {\xpg@french@thinsp}% ")?" -> ")\,?"
      \XeTeXinterchartoks \french@closebrackets \french@punctthick = {\nobreakspace}% "):" -> ") :"
     \fi
-    }
+}
 
 \def\nofrench@punctuation{%
     \lccode"2019=\z@
     \ifluatex
-      \xpg@frpt=0\relax %
-      % Though it would make compilation slightly faster, it is not possible to
-      % safely uncomment the following line. Imagine the following case: you start
-      % a paragraph by some french text, then, in the same paragraph, you change
-      % the language to something else, and thus call the following line. This means
-      % that, at then end of the paragraph, the function won't be in the callback,
-      % so the beginning of the paragraph won't be processed by it.
-      %\directlua{polyglossia.desactivate_frpt()}
+      \directlua{polyglossia.deactivate_french_punct()}%
     \else
       \XeTeXcharclass `\! \z@
       \XeTeXcharclass `\? \z@
@@ -184,15 +290,24 @@
       \XeTeXcharclass `\⁇ \z@
       \XeTeXcharclass `\⁈ \z@
       \XeTeXcharclass `\⁉ \z@
+      \XeTeXcharclass `\‽ \z@
       \XeTeXcharclass `\; \z@
       \XeTeXcharclass `\: \z@
       \XeTeXcharclass `\« \z@
       \XeTeXcharclass `\» \z@
       \XeTeXcharclass `\‹ \z@
       \XeTeXcharclass `\› \z@
+      \XeTeXcharclass `\( \z@
+      \XeTeXcharclass `\) \z@
+      \XeTeXcharclass `\[ \z@
+      \XeTeXcharclass `\] \z@
+      \XeTeXcharclass `\{ \z@
+      \XeTeXcharclass `\} \z@
+      \XeTeXcharclass `\⟨ \z@
+      \XeTeXcharclass `\⟩ \z@
       \XeTeXinterchartokenstate=0
     \fi
-    }
+}
 
 \def\captionsfrench{%
    \def\refname{Références}%
@@ -222,7 +337,7 @@
    \def\ccname{Copie à }%
    \def\headtoname{}%
    \def\proofname{Démonstration}%
-   }
+}
 
 \def\datefrench{%
    \def\today{\ifx\ier\undefined\def\ier{er}\fi

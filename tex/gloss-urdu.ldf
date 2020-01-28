@@ -11,6 +11,7 @@ and may look very wrong.}
 \RequirePackage{hijrical}
 
 \PolyglossiaSetup{urdu}{
+  bcp47=ur,
   script=Arabic,
   direction=RL,
   scripttag=arab,
@@ -20,6 +21,9 @@ and may look very wrong.}
   localnumeral=urdunumerals
   %TODO localalph={abjad,abjad}
 }
+
+% BCP-47 compliant aliases
+\setlanguagealias*{urdu}{ur}
 
 \newif\if@western@numerals
 \def\tmp@western{western}
